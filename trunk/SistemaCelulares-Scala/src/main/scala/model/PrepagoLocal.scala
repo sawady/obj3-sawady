@@ -1,6 +1,6 @@
 package model
 
-class PrepagoLocal(fecha: Fecha) extends Prepago {
+class PrepagoLocal extends Prepago {
   var minutosLibres: Int = 60
   
   override def debeCambiarLlamada(l: Llamada): Boolean = l match {
