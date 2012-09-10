@@ -1,8 +1,9 @@
 package model
+import scala.collection.mutable.HashSet
 
 class Empresa {
 
-  val clientes: List[Cliente] = List()
+  val clientes: HashSet[Cliente] = HashSet()
 
   /* Requerimientos Ej2 */
 

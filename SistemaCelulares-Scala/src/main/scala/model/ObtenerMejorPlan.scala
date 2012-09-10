@@ -15,8 +15,8 @@ object ObtenerMejorPlan {
     xs ::= new HablateTodo()
     
     val fechaDummy = Fecha(1,1)
-    return xs.maxBy(p => new Cliente(c.numero, Map(fechaDummy -> comunicacionesACalcular), List(p)).montoAFacturar(fechaDummy))
-  }	
+    return xs.maxBy(p => new Cliente(c.numero, Map(fechaDummy -> comunicacionesACalcular), p).montoAFacturar(fechaDummy))
+  }
 
   private def comunicacionesTresMeses(c: Cliente, fecha: Fecha): List[TipoDeComunicacion] = tresMeses(fecha).flatMap(f => c.comunicaciones(f))
 
@@ -33,7 +33,7 @@ object ObtenerMejorPlan {
     })
 
     val fechaDummy   = Fecha(1,1)
-    val clienteDummy = new Cliente(0, Map(fechaDummy -> comunicacionesConCliente), List(PlanBasico))
+    val clienteDummy = new Cliente(0, Map(fechaDummy -> comunicacionesConCliente), PlanBasico)
     return clienteDummy.montoAFacturar(fechaDummy)
   }
 
@@ -45,7 +45,7 @@ object ObtenerMejorPlan {
     val comunicacionesConCiudad: List[TipoDeComunicacion] = c.collect({ case l: Llamada => l }).filter(c => c.datos.ciudadDestino == ciudad)
 
     val fechaDummy   = Fecha(1,1)
-    val clienteDummy = new Cliente(1, Map(fechaDummy -> comunicacionesConCiudad), List(PlanBasico))
+    val clienteDummy = new Cliente(1, Map(fechaDummy -> comunicacionesConCiudad), PlanBasico)
 
     return clienteDummy.montoAFacturar(fechaDummy)
   }
