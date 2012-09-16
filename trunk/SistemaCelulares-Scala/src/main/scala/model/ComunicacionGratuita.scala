@@ -1,5 +1,5 @@
 package model
 
-case class ComunicacionGrauita() extends TipoDeLlamada {
+case class ComunicacionGratuita() extends TipoDeLlamada {
   def valorDelMinuto(datos: DatosDeLlamada): Int = 0
 }
