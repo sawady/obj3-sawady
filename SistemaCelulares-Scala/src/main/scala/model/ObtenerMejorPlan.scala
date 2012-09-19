@@ -17,19 +17,25 @@ object ObtenerMejorPlan {
 
     object PlanHablateTodo extends PlanHablateTodo
 
+    object PrepagoInternacional extends PrepagoInternacional
+
+    object PrepagoLocal extends PrepagoLocal
+
     var xs: List[Plan] = List()
 
     xs ::= PlanNumerosAmigos
     xs ::= PlanCiudadesAmigas
     xs ::= PlanHablateTodo
+    xs ::= PrepagoInternacional
+    xs ::= PrepagoLocal
 
-    val fechaDummy = Fecha(1, 1)
-    return xs.maxBy(p => new Cliente(c.numero, p).registrarComunicaciones(fechaDummy, comunicacionesACalcular).montoAFacturar(fechaDummy))
+    val fechaDummy = Fecha(10, 10)
+    return xs.minBy(p => new Cliente(c.numero, p).registrarComunicaciones(fechaDummy, comunicacionesACalcular).montoAFacturar(fechaDummy))
   }
 
-  private def comunicacionesTresMeses(c: Cliente, fecha: Fecha): List[Comunicacion] = tresMeses(fecha).flatMap(f => c.comunicaciones(f))
+  private def comunicacionesTresMeses(c: Cliente, fecha: Fecha): List[Comunicacion] = tresMeses(fecha).flatMap(f => c.comunicaciones.getOrElse(f, List()))
 
-  private def tresMeses(fecha: Fecha): List[Fecha] = List(Fecha(fecha.mes - 2, fecha.año), Fecha(fecha.mes - 1, fecha.año), fecha)
+  private def tresMeses(fecha: Fecha): List[Fecha] = List(Fecha(fecha.mes - 2 % 13, fecha.año), Fecha(fecha.mes - 1 % 13, fecha.año), fecha)
 
   def numerosMasCaros(c: List[Comunicacion], contactos: List[Int]): List[Int] = {
     return contactos.sortBy(num => montoParaCliente(c, num))
@@ -41,7 +47,7 @@ object ObtenerMejorPlan {
       case sms: MensajeDeTexto => sms.nroDestino == unNroDestino
     })
 
-    val fechaDummy = Fecha(1, 1)
+    val fechaDummy = Fecha(10, 10)
     val clienteDummy = new Cliente(0, new Plan()).registrarComunicaciones(fechaDummy, comunicacionesConCliente)
     return clienteDummy.montoAFacturar(fechaDummy)
   }
@@ -53,7 +59,7 @@ object ObtenerMejorPlan {
   def montoParaCiudad(c: List[Comunicacion], ciudad: Ciudad): Int = {
     val comunicacionesConCiudad: List[Comunicacion] = c.collect({ case l: Llamada => l }).filter(c => c.datos.ciudadDestino == ciudad)
 
-    val fechaDummy = Fecha(1, 1)
+    val fechaDummy = Fecha(10, 10)
     val clienteDummy = new Cliente(1, new Plan()).registrarComunicaciones(fechaDummy, comunicacionesConCiudad)
 
     return clienteDummy.montoAFacturar(fechaDummy)

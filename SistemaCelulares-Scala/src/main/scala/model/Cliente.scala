@@ -1,20 +1,20 @@
 package model
-import scala.collection.mutable.HashMap
+import scala.collection.mutable.Map
 
 class Cliente(val numero: Int, val plan: Plan) {
   
-  val comunicaciones: HashMap[Fecha, List[Comunicacion]] = HashMap()
+  val comunicaciones: Map[Fecha, List[Comunicacion]] = Map()
   
   // Utilizar siempre este metodo para acceder a la lista de comunicaciones de una fecha
   def comunicacionesDeFecha(fecha: Fecha): List[Comunicacion] = if(comunicaciones.contains(fecha)) comunicaciones(fecha) else List()
   
   def registrarComunicaciones(fecha: Fecha, coms: List[Comunicacion]): Cliente = {
-    for (com <- coms) registrarComunicacion(com)
+    for (com <- coms) registrarComunicacion(fecha, com)
     return this
   }
   
-  def registrarComunicacion(com: Comunicacion): Cliente = {
-    comunicaciones.update(com.fecha, com :: comunicacionesDeFecha(com.fecha))
+  def registrarComunicacion(fecha: Fecha, com: Comunicacion): Cliente = {
+    comunicaciones.update(fecha, com :: comunicacionesDeFecha(fecha))
     return this
   }
   
@@ -24,7 +24,6 @@ class Cliente(val numero: Int, val plan: Plan) {
 
   def montoAFacturar(fecha: Fecha): Int = {
    aplicarPlanALlamadas(fecha)
-   println(comunicacionesDeFecha(fecha))
    return comunicacionesDeFecha(fecha).foldLeft(0)((r, x) => r + x.precio) 
   }
   
