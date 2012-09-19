@@ -1,13 +1,11 @@
 package model
 
 trait PlanHablateTodo extends Plan {
-  
-  override def aplicarPlan(t: Comunicacion): Comunicacion = super.aplicarPlan(t) match {
-    case l: Llamada if this.debeCambiarLlamada(l) => this.nuevaLlamada(l)
-    case otro                                      => otro
-  }
-  
-  def debeCambiarLlamada(l: Llamada): Boolean = !l.esLlamadaGratuita() && l.datos.fecha.esFinDeSemana()
-  def nuevaLlamada(l: Llamada): Llamada = l.cambiarMinutos(l.datos.minutos % 5)
-  
+
+  private def debeCambiar(l: Llamada): Boolean = l.datos.fecha.esFinDeSemana()
+
+  private def nuevaLlamada(l: Llamada): Llamada = l.cambiarMinutos(l.datos.minutos % 5)
+
+  override def aplicarPlan(t: Comunicacion): Comunicacion = PlanesDeLlamada.aplicarParaLlamada(debeCambiar, nuevaLlamada, super.aplicarPlan(t))
+
 }
