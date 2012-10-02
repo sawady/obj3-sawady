@@ -5,7 +5,9 @@ public class TestResultCaching {
 	public static void main(String[] args) {
 		Funciones funcs = new Funciones();
 		
-		System.out.println(funcs.fib(22));
+		for(int i = 22; i >= 0; i--){
+			System.out.println(funcs.fib(i));
+		}
 	}
 
 }

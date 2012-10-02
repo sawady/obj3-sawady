@@ -1,13 +1,14 @@
 package model;
 
+@Cacheable
 public class Funciones {
 	
-	@CachResults
+	@CacheableFunction
 	public int fib(int n) {
 		return n > 2 ? fib(n - 1) + fib(n - 2) : 1;
 	}
 
-	@CachResults
+	@CacheableFunction
 	public int ack(int m, int n) {
 		if (m == 0) {
 			return n + 1;
@@ -16,6 +17,10 @@ public class Funciones {
 		} else {
 			return ack(m - 1, ack(m, n - 1));
 		}
+	}
+	
+	public String concatenate(String s1, String s2) {
+		return s1 + s2;
 	}
 
 }
