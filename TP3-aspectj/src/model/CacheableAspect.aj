@@ -1,46 +1,58 @@
 package model;
 
+import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public aspect ResultCaching {
+public aspect CacheableAspect {
 
-	private Map<String, Map<ArrayWrapper, Integer>> cachedResults = new HashMap<String, Map<ArrayWrapper, Integer>>();
-
-	pointcut isCachable() : call(@CachResults * *(..));
-
-	Integer around() : isCachable() {
+	private static Map<String, Map<ArrayWrapper, Object>> cachedResults = new HashMap<String, Map<ArrayWrapper, Object>>();
+	
+	declare parents : @Cacheable * implements CacheableQueries;
+	
+	pointcut cacheableObject() : call(@CacheableFunction * @Cacheable *.*(..));
+	
+	Object around() : cacheableObject() {
 		String signature = thisJoinPoint.getSignature().toString();
 		ArrayWrapper args = new ArrayWrapper(thisJoinPoint.getArgs());
 		if (isCachedArgs(signature, args)) {
+			System.out.println("cached");
 			return getCachedResult(signature, args);
 		} else {
-			Integer result = proceed();
+			Object result = proceed();
 			catchResult(signature, args, result);
 			return result;
 		}
 	}
 
-	private void catchResult(String signature, ArrayWrapper args,	Integer proceed) {
-		if (isCachedArgs(signature, args)) {
-			
-		} else {
-			
+	private void catchResult(String signature, ArrayWrapper args, Object proceed) {
+		if(!isChachedSignature(signature)) {
+			cachedResults.put(signature, new HashMap<ArrayWrapper, Object>());
 		}
+		
+		cachedResults.get(signature).put(args, proceed);
 	}
 	
 	private boolean isChachedSignature(String signature) {
-		return this.cachedResults.containsKey(signature);
+		return cachedResults.containsKey(signature);
 	}
 
 	private boolean isCachedArgs(String signature, ArrayWrapper args) {
 		return isChachedSignature(signature)
-				&& this.cachedResults.get(signature).containsKey(args);
+				&& cachedResults.get(signature).containsKey(args);
 	}
 
-	private Integer getCachedResult(String signature, ArrayWrapper args) {
-		return this.cachedResults.get(signature).get(args);
+	private Object getCachedResult(String signature, ArrayWrapper args) {
+		return cachedResults.get(signature).get(args);
+	}
+	
+	public void CacheableQueries.getCache(String signature) {
+		cachedResults.get(signature);
+	}
+	
+	public void CacheableQueries.cleanCache(String signature) {
+		cachedResults.remove(signature);
 	}
 
 	private class ArrayWrapper {
@@ -75,10 +87,10 @@ public aspect ResultCaching {
 			return true;
 		}
 
-		private ResultCaching getOuterType() {
-			return ResultCaching.this;
+		private CacheableAspect getOuterType() {
+			return CacheableAspect.this;
 		}
 
 	}
-
+	
 }
