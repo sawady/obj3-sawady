@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 
 public class TestResultCaching {
 
@@ -11,16 +10,6 @@ public class TestResultCaching {
 			System.out.println(funcs.fib(i));
 		}
 		
-		Temperaturas temp = new Temperaturas();
-		System.out.println("Primera busqueda de temperatura");
-		temp.temperaturaMaxima("Quilmes");
-		System.out.println("Ahora debe cacehar");
-		temp.temperaturaMaxima("Quilmes");
-		System.out.println("Ahora no debe cachear");
-		temp.limpiarTemperatures();
-		temp.temperaturaMaxima("Quilmes");
-		System.out.println("Ahora vuelve a cachear");
-		temp.temperaturaMaxima("Quilmes");
 	}
 
 }
