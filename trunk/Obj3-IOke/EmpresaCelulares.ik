@@ -5,6 +5,10 @@ Fecha initialize = method(dia, mes,
 )
 Fecha esIgual = method(x, self dia == x dia && self mes == x mes)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Comunicaciones
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 Comunicacion = Origin mimic
 ;nro_destino
 ;tipo_comunicacion
@@ -43,8 +47,13 @@ MensajeDeTexto precio_unitario = 10
 MensajeDeTexto es_llamada = false
 MensajeDeTexto es_larga   = method(x, x > 140)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Cliente
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 Cliente = Origin mimic
 Cliente comunicaciones = {}
+Cliente plan = SinPlan 
 
 ;La cantidad total de minutos de llamada utilizados en ese mes.
 Cliente cantidad_total_minutos = method(mes, 
@@ -53,7 +62,7 @@ Cliente cantidad_total_minutos = method(mes,
 
 ;El monto a facturar en ese mes.
 Cliente monto_facturar = method(mes, 
-	self comunicaciones at(mes) fold(0, sum, x, sum + x precio_base)
+	self plan aplicar_plan(self comunicaciones at(mes)) fold(0, sum, x, sum + x precio_base)
 )
 
 ;La cantidad de comunicaciones ”largas”. Una llamada
@@ -70,6 +79,13 @@ Cliente ciudades_llamadas_larga_distancia = method(mes,
 Cliente dia_que_mas_llamadas_realizo = method(mes,
 	self comunicaciones at(mes) groupBy(fecha dia) max(value length) key
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PLANES
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+SinPlan = Origin mimic
+SinPlan aplicar_plan = method(xs, xs)
 
 PlanQueFiltra = Origin mimic
 ;coleccion_a_filtrar
@@ -92,6 +108,10 @@ feriados = []
 HablateTodo = PlanQueFiltra mimic
 HablateTodo coleccion_a_filtrar = method(feriados)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Empresa
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 Empresa = Origin mimic
 Empresa clientes = []
 
@@ -109,6 +129,10 @@ Empresa cliente_con_mayor_factura = method(mes,
 Empresa cliente_con_mas_comunicaciones_largas = method(mes,
 	self clientes max(cantidad_comunicaciones_largas(2))
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Ejemplos
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 una_comunicacion_local = Comunicacion mimic
 una_comunicacion_local fecha = Fecha mimic(1,2)
