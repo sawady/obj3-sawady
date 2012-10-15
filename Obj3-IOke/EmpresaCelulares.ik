@@ -3,6 +3,7 @@ Fecha initialize = method(dia, mes,
 	self dia = dia
 	self mes = mes
 )
+Fecha esIgual = method(x, self dia == x dia && self mes == x mes)
 
 Comunicacion = Origin mimic
 ;nro_destino
@@ -51,7 +52,7 @@ Cliente cantidad_total_minutos = method(mes,
 )
 
 ;El monto a facturar en ese mes.
-Cliente montor_facturar = method(mes, 
+Cliente monto_facturar = method(mes, 
 	self comunicaciones at(mes) fold(0, sum, x, sum + x precio_base)
 )
 
@@ -70,6 +71,27 @@ Cliente dia_que_mas_llamadas_realizo = method(mes,
 	self comunicaciones at(mes) groupBy(fecha dia) max(value length) key
 )
 
+PlanQueFiltra = Origin mimic
+;coleccion_a_filtrar
+PlanQueFiltra aplicar_plan = method(xs, 
+	xs reject(x, 
+		self coleccion_a_filtrar() one?(==(x))
+	)
+)
+
+NumerosAmigos = PlanQueFiltra mimic
+;numeros
+NumerosAmigos coleccion_a_filtrar = method(self numeros)
+
+CiudadesAmigas = PlanQueFiltra mimic
+;ciudades
+CiudadesAmigas coleccion_a_filtrar = method(self ciudades)
+
+feriados = []
+
+HablateTodo = PlanQueFiltra mimic
+HablateTodo coleccion_a_filtrar = method(feriados)
+
 Empresa = Origin mimic
 Empresa clientes = []
 
@@ -80,7 +102,7 @@ Empresa cliente_mas_minutos_hablo = method(mes,
 
 ;Cliente que mas facturo
 Empresa cliente_con_mayor_factura = method(mes,
-	self clientes max(montor_facturar(2))
+	self clientes max(monto_facturar(2))
 )
 
 ;El cliente con mas comunicaciones largas
@@ -120,7 +142,7 @@ movistar clientes = [fede,martin]
 imprimir = fn(text, valor, (text + ": " + valor) println)
 
 imprimir("Cantidad total de minutos", fede cantidad_total_minutos(2))
-imprimir("Monto a facturar", fede montor_facturar(2))
+imprimir("Monto a facturar", fede monto_facturar(2))
 imprimir("Cantidad comunicaciones largas", fede cantidad_comunicaciones_largas(2))
 imprimir("Ciudades a las que realizo llamadas larga distancia", fede ciudades_llamadas_larga_distancia(2))
 imprimir("Dia que mas comunicaciones realizo", fede dia_que_mas_llamadas_realizo(2))
