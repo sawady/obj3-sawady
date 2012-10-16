@@ -62,39 +62,6 @@ MensajeDeTexto es_llamada = false
 MensajeDeTexto es_larga   = method(x, x > 140)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Cliente
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-Cliente = Origin mimic
-Cliente comunicaciones = {}
-Cliente plan = SinPlan 
-
-;La cantidad total de minutos de llamada utilizados en ese mes.
-Cliente cantidad_total_minutos = method(mes, 
-	self comunicaciones at(mes) filter(es_llamada) fold(0, sum, x, sum + x extension)
-)
-
-;El monto a facturar en ese mes.
-Cliente monto_facturar = method(mes, 
-	self plan aplicar_plan(self comunicaciones at(mes)) fold(0, sum, x, sum + x precio_base) + self plan precio_extra
-)
-
-;La cantidad de comunicaciones ”largas”. Una llamada
-;es larga si supera los 5 minutos, un mensaje de texto
-;es largo si supera los 140 caracteres.
-Cliente cantidad_comunicaciones_largas = method(mes, self comunicaciones at(mes) count(es_larga))
-
-;Las ciudades a las que realizo llamadas de larga distancia.
-Cliente ciudades_llamadas_larga_distancia = method(mes, 
-	self comunicaciones at(mes) map(tipo_comunicacion) filter(mimics?(LLamadaLargaDistancia)) map(localidad_destino)
-)
-
-;El dia en el que mas comunicaciones realizo.
-Cliente dia_que_mas_llamadas_realizo = method(mes,
-	self comunicaciones at(mes) groupBy(fecha dia) max(value length) key
-)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PLANES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -153,6 +120,39 @@ PrepagoInternacional aplica = method(xs, xs mimics?(LlamadaLargaDistancia))
 
 mejor_plan = fn(c,
 	
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Cliente
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Cliente = Origin mimic
+Cliente comunicaciones = {}
+Cliente plan = PlanBase
+
+;La cantidad total de minutos de llamada utilizados en ese mes.
+Cliente cantidad_total_minutos = method(mes, 
+	self comunicaciones at(mes) filter(es_llamada) fold(0, sum, x, sum + x extension)
+)
+
+;El monto a facturar en ese mes.
+Cliente monto_facturar = method(mes, 
+	self plan aplicar_plan(self comunicaciones at(mes)) fold(0, sum, x, sum + x precio_base) + self plan precio_extra
+)
+
+;La cantidad de comunicaciones ”largas”. Una llamada
+;es larga si supera los 5 minutos, un mensaje de texto
+;es largo si supera los 140 caracteres.
+Cliente cantidad_comunicaciones_largas = method(mes, self comunicaciones at(mes) count(es_larga))
+
+;Las ciudades a las que realizo llamadas de larga distancia.
+Cliente ciudades_llamadas_larga_distancia = method(mes, 
+	self comunicaciones at(mes) map(tipo_comunicacion) filter(mimics?(LLamadaLargaDistancia)) map(localidad_destino)
+)
+
+;El dia en el que mas comunicaciones realizo.
+Cliente dia_que_mas_llamadas_realizo = method(mes,
+	self comunicaciones at(mes) groupBy(fecha dia) max(value length) key
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
