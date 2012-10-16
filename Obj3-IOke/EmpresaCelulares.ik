@@ -28,6 +28,20 @@ tabla_precios = fn(c1, c2,
 Llamada = Origin mimic
 Llamada es_llamada = true
 Llamada es_larga = method(x, x > 5)
+Llamada reducirMinutos = method(min, 
+	newCom = Llamada mimic
+	newCom nro_destino = self nro_destino
+	newCom tipo_comunicacion = self tipo_comunicacion
+	newCom fecha = self fecha
+	
+	if(self extension > min,
+		newCom extension = self extension - min
+		(newCom, 0),
+		
+		newCom extension = 0
+		(newCom, min - self extension)
+	)
+)
 
 LlamadaLocal = Llamada mimic
 LlamadaLocal precio_unitario = 50
@@ -62,7 +76,7 @@ Cliente cantidad_total_minutos = method(mes,
 
 ;El monto a facturar en ese mes.
 Cliente monto_facturar = method(mes, 
-	self plan aplicar_plan(self comunicaciones at(mes)) fold(0, sum, x, sum + x precio_base)
+	self plan aplicar_plan(self comunicaciones at(mes)) fold(0, sum, x, sum + x precio_base) + self plan precio_extra
 )
 
 ;La cantidad de comunicaciones ”largas”. Una llamada
@@ -84,10 +98,18 @@ Cliente dia_que_mas_llamadas_realizo = method(mes,
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PLANES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-SinPlan = Origin mimic
-SinPlan aplicar_plan = method(xs, xs)
+PlanBase = Origin mimic
+PlanBase aplicar_plan = method(xs, xs)
+PlanBase precio_extra = 10
 
-PlanQueFiltra = Origin mimic
+Planes = PlanBase mimic
+;planes
+Planes precio_extra  = method(self planes fold(0, r, x, r + x))
+Planes aplicar_plan  = method(xs,
+	self planes fold(xs, rs, p, p aplicar_plan(rs))
+)
+
+PlanQueFiltra = PlanBase mimic
 ;coleccion_a_filtrar
 PlanQueFiltra aplicar_plan = method(xs, 
 	xs reject(x, 
@@ -107,6 +129,31 @@ feriados = []
 
 HablateTodo = PlanQueFiltra mimic
 HablateTodo coleccion_a_filtrar = method(feriados)
+
+Prepago = PlanBase mimic
+;aplica
+Prepago aplicar_plan = method(xs,
+	xs collect(x,
+		if(! self aplica(x),
+			xs,
+			(newCom, min_restantes) = x reducirMinutos
+			self minutos_libres = min_restantes
+			newCom
+		)
+	)
+)
+
+PrepagoLocal = Prepago mimic
+PrepagoLocal minutos_libres = 60
+PrepagoLocal aplica = method(xs, xs mimics?(LlamadaLocal))
+
+PrepagoInternacional = Prepago mimic
+PrepagoInternacional minutos_libres = 30
+PrepagoInternacional aplica = method(xs, xs mimics?(LlamadaLargaDistancia))
+
+mejor_plan = fn(c,
+	
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Empresa
