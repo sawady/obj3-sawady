@@ -124,6 +124,28 @@ PrepagoInternacional = Prepago mimic
 PrepagoInternacional minutos_libres = 30
 PrepagoInternacional aplica = method(x, x tipo_comunicacion mimics?(LLamadaLargaDistancia))
 
+mejor_plan_para = fn(c, mes,
+
+	cliente_dummy = Cliente mimic
+	cliente_dummy comunicaciones = c comunicaciones
+
+	plan_amigos = NumerosAmigos mimic
+	plan_amigos numeros = c comunicaciones at(mes) collect(nro_destino) take(5)
+
+	plan_ciudades = CiudadesAmigas mimic
+	plan_ciudades ciudades = c comunicaciones at(mes) filter(tipo_comunicacion cell?(:localidad_destino)) collect(tipo_comunicacion localidad_destino) take(5)
+
+
+	lista_de_planes = [plan_amigos do(nombre = "Numeros Amigos"), 
+                       plan_ciudades do(nombre = "Ciudades Amigas"), 
+                       HablateTodo mimic do(nombre = "Hablate Todo"), 
+                       PrepagoLocal mimic do(nombre = "Prepago Local"), 
+                       PrepagoInternacional mimic do(nombre = "Prepago Internacional")
+                      ]
+
+	lista_de_planes max(l, cliente_dummy plan = l. cliente_dummy monto_facturar(mes)) nombre 
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Cliente
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -247,3 +269,22 @@ imprimir("Lautaro con plan Prepago Local factura", lautaro monto_facturar(2))
 
 lautaro plan = PrepagoInternacional mimic
 imprimir("Lautaro con plan Prepago Internacional factura", lautaro monto_facturar(2))
+
+imprimir("Mejor Plan para Lautaro en Febrero es", mejor_plan_para(lautaro, 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; RESULTADOS
+;Fede, Cantidad total de minutos: 20
+;Fede, Monto a facturar: 3110
+;Fede, Cantidad comunicaciones largas: 2
+;Fede, Ciudades a las que realizo llamadas larga distancia: [Lima]
+;Fede, Dia que mas comunicaciones realizo: 1
+;Cliente que mas minutos hablo: Martin
+;Cliente con mayor factura: Fede
+;Cliente con mas comunicaciones largas: Martin
+;;Lautaro con plan Base factura: 3110
+;Lautaro con plan Numeros Amigos factura: 10
+;Lautaro con plan Ciudades Amigas factura: 610
+;Lautaro con plan Hablate Todo factura: 110
+;Lautaro con plan Prepago Local factura: 2610
+;Lautaro con plan Prepago Internacional factura: 610
+;Mejor Plan para Lautaro en Febrero es: Numeros Amigos
