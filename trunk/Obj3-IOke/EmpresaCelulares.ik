@@ -76,8 +76,6 @@ Planes aplicar_plan  = method(xs,
 	self planes fold(xs, rs, p, p aplicar_plan(rs))
 )
 
-PlanQueFiltra = PlanBase mimic
-
 NumerosAmigos = PlanQueFiltra mimic
 ;numeros
 NumerosAmigos aplicar_plan = method(xs, 
