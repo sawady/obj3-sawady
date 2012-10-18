@@ -127,12 +127,19 @@ mejor_plan_para = fn(c, mes,
 	cliente_dummy = Cliente mimic
 	cliente_dummy comunicaciones = c comunicaciones
 
+	los_5_mejores = fn(xs,
+		xs group() map(kv, (key,value) = kv. (key,value count)) sortBy(second) map(first) take(5)
+	)
+
 	plan_amigos = NumerosAmigos mimic
-	plan_amigos numeros = c comunicaciones at(mes) collect(nro_destino) take(5)
+	plan_amigos numeros = los_5_mejores(
+		cliente_dummy comunicaciones at(mes) collect(nro_destino)
+	)
 
 	plan_ciudades = CiudadesAmigas mimic
-	plan_ciudades ciudades = c comunicaciones at(mes) filter(tipo_comunicacion cell?(:localidad_destino)) collect(tipo_comunicacion localidad_destino) take(5)
-
+	plan_ciudades ciudades = los_5_mejores(
+		cliente_dummy comunicaciones at(mes) filter(tipo_comunicacion cell?(:localidad_destino)) collect(tipo_comunicacion localidad_destino)
+	)
 
 	lista_de_planes = [plan_amigos do(nombre = "Numeros Amigos"), 
                        plan_ciudades do(nombre = "Ciudades Amigas"), 
@@ -141,7 +148,7 @@ mejor_plan_para = fn(c, mes,
                        PrepagoInternacional mimic do(nombre = "Prepago Internacional")
                       ]
 
-	lista_de_planes max(l, cliente_dummy plan = l. cliente_dummy monto_facturar(mes)) nombre 
+	lista_de_planes min(l, cliente_dummy plan = l. cliente_dummy monto_facturar(mes)) nombre 
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
