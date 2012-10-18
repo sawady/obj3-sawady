@@ -17,19 +17,8 @@ Comunicacion = Origin mimic
 Comunicacion precio_base = method(self tipo_comunicacion precio_unitario * self extension)
 Comunicacion es_llamada  = method(self tipo_comunicacion es_llamada)
 Comunicacion es_larga    = method(self tipo_comunicacion es_larga(self extension))
-
-tabla_precios = fn(c1, c2, 
-	case( (c1,c2),
-		("Buenos Aires", "Lima"), 250,
-		100
-	)
-)
-
-Llamada = Origin mimic
-Llamada es_llamada = true
-Llamada es_larga = method(x, x > 5)
-Llamada reducirMinutos = method(min, 
-	newCom = Llamada mimic
+Comunicacion reducirMinutos = method(min, 
+	newCom = Comunicacion mimic
 	newCom nro_destino = self nro_destino
 	newCom tipo_comunicacion = self tipo_comunicacion
 	newCom fecha = self fecha
@@ -42,6 +31,17 @@ Llamada reducirMinutos = method(min,
 		(newCom, min - self extension)
 	)
 )
+
+tabla_precios = fn(c1, c2, 
+	case( (c1,c2),
+		("Buenos Aires", "Lima"), 250,
+		100
+	)
+)
+
+Llamada = Origin mimic
+Llamada es_llamada = true
+Llamada es_larga = method(x, x > 5)
 
 LlamadaLocal = Llamada mimic
 LlamadaLocal precio_unitario = 50
@@ -77,33 +77,39 @@ Planes aplicar_plan  = method(xs,
 )
 
 PlanQueFiltra = PlanBase mimic
-;coleccion_a_filtrar
-PlanQueFiltra aplicar_plan = method(xs, 
-	xs reject(x, 
-		self coleccion_a_filtrar() one?(==(x))
-	)
-)
 
 NumerosAmigos = PlanQueFiltra mimic
 ;numeros
-NumerosAmigos coleccion_a_filtrar = method(self numeros)
+NumerosAmigos aplicar_plan = method(xs, 
+	xs reject(x, 
+		self numeros one?(==(x nro_destino))
+	)
+)
 
 CiudadesAmigas = PlanQueFiltra mimic
 ;ciudades
-CiudadesAmigas coleccion_a_filtrar = method(self ciudades)
+CiudadesAmigas aplicar_plan = method(xs, 
+	xs reject(x,
+		x tipo_comunicacion cell?(:localidad_destino) && self ciudades one?(==(x tipo_comunicacion localidad_destino))
+	)
+)
 
-feriados = []
+feriados = [Fecha mimic(1,2)]
 
 HablateTodo = PlanQueFiltra mimic
-HablateTodo coleccion_a_filtrar = method(feriados)
+HablateTodo aplicar_plan = method(xs, 
+	xs reject(x, 
+		feriados one?(esIgual(x fecha))
+	)
+)
 
 Prepago = PlanBase mimic
 ;aplica
 Prepago aplicar_plan = method(xs,
 	xs collect(x,
 		if(! self aplica(x),
-			xs,
-			(newCom, min_restantes) = x reducirMinutos
+			x,
+			(newCom, min_restantes) = x reducirMinutos(self minutos_libres)
 			self minutos_libres = min_restantes
 			newCom
 		)
@@ -112,15 +118,11 @@ Prepago aplicar_plan = method(xs,
 
 PrepagoLocal = Prepago mimic
 PrepagoLocal minutos_libres = 60
-PrepagoLocal aplica = method(xs, xs mimics?(LlamadaLocal))
+PrepagoLocal aplica = method(x, x tipo_comunicacion mimics?(LlamadaLocal))
 
 PrepagoInternacional = Prepago mimic
 PrepagoInternacional minutos_libres = 30
-PrepagoInternacional aplica = method(xs, xs mimics?(LlamadaLargaDistancia))
-
-mejor_plan = fn(c,
-	
-)
+PrepagoInternacional aplica = method(x, x tipo_comunicacion mimics?(LLamadaLargaDistancia))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Cliente
@@ -212,12 +214,36 @@ movistar clientes = [fede,martin]
 
 imprimir = fn(text, valor, (text + ": " + valor) println)
 
-imprimir("Cantidad total de minutos", fede cantidad_total_minutos(2))
-imprimir("Monto a facturar", fede monto_facturar(2))
-imprimir("Cantidad comunicaciones largas", fede cantidad_comunicaciones_largas(2))
-imprimir("Ciudades a las que realizo llamadas larga distancia", fede ciudades_llamadas_larga_distancia(2))
-imprimir("Dia que mas comunicaciones realizo", fede dia_que_mas_llamadas_realizo(2))
+imprimir("Fede, Cantidad total de minutos", fede cantidad_total_minutos(2))
+imprimir("Fede, Monto a facturar", fede monto_facturar(2))
+imprimir("Fede, Cantidad comunicaciones largas", fede cantidad_comunicaciones_largas(2))
+imprimir("Fede, Ciudades a las que realizo llamadas larga distancia", fede ciudades_llamadas_larga_distancia(2))
+imprimir("Fede, Dia que mas comunicaciones realizo", fede dia_que_mas_llamadas_realizo(2))
 
 imprimir("Cliente que mas minutos hablo", movistar cliente_mas_minutos_hablo(2) nombre)
 imprimir("Cliente con mayor factura", movistar cliente_con_mayor_factura(2) nombre)
 imprimir("Cliente con mas comunicaciones largas", movistar cliente_con_mas_comunicaciones_largas(2) nombre)
+
+lautaro = Cliente mimic
+lautaro comunicaciones = {2 => [una_comunicacion_local, una_comunicacion_larga, un_sms]}
+lautaro nombre = "Lautaro"
+imprimir("Lautaro con plan Base factura", lautaro monto_facturar(2))
+
+lautaro plan = NumerosAmigos mimic do(
+	numeros = [1169328418]
+)
+imprimir("Lautaro con plan Numeros Amigos factura", lautaro monto_facturar(2))
+
+lautaro plan = CiudadesAmigas mimic do(
+	ciudades = ["Lima"]
+)
+imprimir("Lautaro con plan Ciudades Amigas factura", lautaro monto_facturar(2))
+
+lautaro plan = HablateTodo mimic
+imprimir("Lautaro con plan Hablate Todo factura", lautaro monto_facturar(2))
+
+lautaro plan = PrepagoLocal mimic
+imprimir("Lautaro con plan Prepago Local factura", lautaro monto_facturar(2))
+
+lautaro plan = PrepagoInternacional mimic
+imprimir("Lautaro con plan Prepago Internacional factura", lautaro monto_facturar(2))
