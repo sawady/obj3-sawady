@@ -6,18 +6,18 @@ abstract class Rule(rule: Packet => Boolean) {
 
 }
 
-class EqPort(n: Int) extends Rule(_.port == n)
+case class EqPort(n: Int) extends Rule(_.port == n)
 
-class GtPort(n: Int) extends Rule(_.port > n)
+case class GtPort(n: Int) extends Rule(_.port > n)
 
-class LtPort(n: Int) extends Rule(_.port < n)
+case class LtPort(n: Int) extends Rule(_.port < n)
 
-class EqIpDest(n: Int) extends Rule(_.destIP == n)
+case class EqIpDest(n: IP) extends Rule(_.destIP == n)
 
-class EqIpSource(n: Int) extends Rule(_.sourceIP == n)
+case class EqIpSource(n: IP) extends Rule(_.sourceIP == n)
 
-class Not(rule: Rule) extends Rule(p => !rule(p))
+case class Not(rule: Rule) extends Rule(p => !rule(p))
 
-class Exists(rules: Iterable[Rule]) extends Rule( p => rules exists(_(p)) )
+case class OneApply(rules: Rule*) extends Rule( p => rules exists(_(p)) )
 
-class ForAll(rules: Iterable[Rule]) extends Rule( p => rules forall(_(p)) )
+case class AllApply(rules: Rule*) extends Rule( p => rules forall(_(p)) )
