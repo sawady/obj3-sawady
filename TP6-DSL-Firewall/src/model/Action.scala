@@ -1,36 +1,37 @@
 package model
 
 trait Action {
-  
+
   def apply(p: Packet)
 
 }
 
-case class JoinActions(actions: Iterable[Action]) extends Action
-{
-  def apply(p: Packet) = for (a <- actions) a(p)
-}
-
-case object NullAction extends Action {
+class JoinActions(actions: Action*) extends Action {
   
-  def apply(p: Packet) = {}
+  def apply(p: Packet) = actions foreach(_(p))
   
 }
 
-case object InformDest extends Action {  
-  
+object NullAction extends Action {
+
   def apply(p: Packet) = {}
-  
+
 }
 
-case object LogMessage extends Action {  
-  
+object InformDest extends Action {
+
   def apply(p: Packet) = {}
-  
+
 }
 
-case object LogDeny extends Action {  
-  
+object LogMessage extends Action {
+
   def apply(p: Packet) = {}
-  
+
+}
+
+object LogDeny extends Action {
+
+  def apply(p: Packet) = {}
+
 }
