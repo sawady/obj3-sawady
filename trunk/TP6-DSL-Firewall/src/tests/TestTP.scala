@@ -31,7 +31,7 @@ class TestTP extends FunSuite with BeforeAndAfter {
 	  	, fp(1023)) foreach { p => assert(!rule(p)) }
   }
   
-  test("No se aceptar´ ning´n mensaje proveniente de la IP 24.35.126.155") {
+  test("No se aceptará ningún mensaje proveniente de la IP 24.35.126.155") {
     
   }
 

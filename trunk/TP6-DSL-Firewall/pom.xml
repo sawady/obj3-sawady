@@ -32,16 +32,17 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>org.scalaz</groupId>
+			<artifactId>scalaz-core_2.9.2</artifactId>
+			<version>6.0.4</version>
+		</dependency>
+		
 <!-- 		<dependency> -->
 <!-- 			<groupId>org.specs2</groupId> -->
 <!-- 			<artifactId>specs2_${scala.version}</artifactId> -->
 <!-- 			<version>1.12.1</version> -->
 <!-- 			<scope>test</scope> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 		<groupId>org.specs2</groupId> -->
-<!-- 		<artifactId>specs2-scalaz-core_${scala.version}</artifactId> -->
-<!-- 		<version>6.0.RC2</version> -->
 <!-- 		</dependency> -->
 <!-- 		<dependency> -->
 <!-- 			<groupId>org.scalacheck</groupId> -->
