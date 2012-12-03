@@ -12,6 +12,12 @@ class JoinActions(actions: Action*) extends Action {
   
 }
 
+case class Redirect(ip: Socket*) extends Action {
+
+  def apply(p: Packet) = {}
+
+}
+
 object NullAction extends Action {
 
   def apply(p: Packet) = {}
