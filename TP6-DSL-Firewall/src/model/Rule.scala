@@ -1,43 +1,29 @@
 package model
 
-trait FirewallRule {
-
-  def apply(p: Packet): Boolean
-
-}
-
-abstract class Rule(rule: Packet => Boolean) extends FirewallRule {
+abstract class Rule(rule: Packet => Boolean) {
 
   def apply(p: Packet): Boolean = rule(p)
 
 }
 
-case class EqPort(n: Int) extends Rule(_.port == n)
+case class EqPortSource(n: Port) extends Rule(_.source.port == n)
 
-case class GtPort(n: Int) extends Rule(_.port > n)
+case class EqPortDest(n: Port) extends Rule(_.dest.port == n)
 
-case class LtPort(n: Int) extends Rule(_.port < n)
+case class GtPortSource(n: Port) extends Rule(_.source.port > n)
 
-case class EqIpDest(n: IP) extends Rule(_.destIP == n)
+case class LtPortSource(n: Port) extends Rule(_.source.port < n)
 
-case class EqIpSource(n: IP) extends Rule(_.sourceIP == n)
+case class GtPortDest(n: Port) extends Rule(_.dest.port > n)
+
+case class LtPortDest(n: Port) extends Rule(_.dest.port < n)
+
+case class EqIpSource(n: Ip) extends Rule(_.source.ip == n)
+
+case class EqIpDest(n: Ip) extends Rule(_.dest.ip == n)
 
 case class Not(rule: Rule) extends Rule(p => !rule(p))
 
 case class OneApply(rules: Rule*) extends Rule(p => rules exists (_(p)))
 
 case class AllApply(rules: Rule*) extends Rule(p => rules forall (_(p)))
-
-case class ActionRule(rule: Rule, action: Action) extends FirewallRule {
-
-  override def apply(p: Packet): Boolean = {
-    if (rule(p)) {
-      action(p)
-      return true;
-    }
-    else {
-      return false
-    }
-  }
-
-}

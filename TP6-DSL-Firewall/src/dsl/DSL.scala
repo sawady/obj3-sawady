@@ -1,5 +1,0 @@
-package dsl
-
-object DSL {
-
-}
