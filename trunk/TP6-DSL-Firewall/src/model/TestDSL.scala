@@ -27,7 +27,7 @@ class TestDSL extends FunSuite with BeforeAndAfter with FirewallDSL {
   test("Filtrar todos los puertos salvo el 80, 443 y 8080") {
 
     onFirewall(LAN.firewall) {
-      BLOCK ALL(*)
+      BLOCK ALL*
       PASS EQ Ports(80, 443, 8080)
     }
 
