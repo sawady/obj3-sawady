@@ -50,8 +50,10 @@ class TestTP extends FunSuite with BeforeAndAfter with FirewallDSL {
     onFirewall(net.firewall) {
       BLOCK LT Port(1024)
       PASS GT Port(1024)
-      BLOCK EQ Ports(80, 23, 25, 110)
+      PASS EQ Ports(80, 23, 25, 110)
     }
+    
+    net.firewall.rules foreach println
 
     assert(net.firewall.rules.forall(r =>
       r.action == JoinActions(List())
@@ -69,9 +71,9 @@ class TestTP extends FunSuite with BeforeAndAfter with FirewallDSL {
 
     assert(net.firewall.rules.exists(r =>
       r.rule == AllApply(List(OneApply(List(EqPort(Port(80)), EqPort(Port(23)), EqPort(Port(25)), EqPort(Port(110))))))
-        && r.ruleType == Block
+      && r.ruleType == Pass
     ))
-
+    
   }
 
   test("Redirigir todo los paquetes con destino a 192.168.1.185 a la IP 192.168.1.73") {
@@ -100,7 +102,6 @@ class TestTP extends FunSuite with BeforeAndAfter with FirewallDSL {
       && r.action == JoinActions(Queue(LogMessage))
     ))
 
-    net.firewall.rules foreach println
   }
 
 }
