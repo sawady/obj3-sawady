@@ -3,10 +3,11 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.FunSuite
 import scala.collection.immutable.Queue
 
-class TestTP extends FunSuite with BeforeAndAfter with FirewallDSL {
+class TestDSL extends FunSuite with BeforeAndAfter with FirewallDSL {
 
   before {
     LAN.reset()
+    WAN.reset()
   }
 
   test("No se aceptará ningún mensaje proveniente de la IP 24.35.126.155") {
@@ -87,7 +88,7 @@ class TestTP extends FunSuite with BeforeAndAfter with FirewallDSL {
   }
 
   test("Bloquear todos los mensajes provinientes de las IP 25.78.78.78 y de " +
-    "la IP 84.23.43.22. Adem´s se desea loguear todo este tráﬁco") {
+    "la IP 84.23.43.22. Además se desea loguear todo este tráﬁco") {
 
     onFirewall(LAN.firewall) {
       BLOCK EQ SOURCE(25, 78, 78, 78) EQ SOURCE(84, 23, 43, 22) LOG

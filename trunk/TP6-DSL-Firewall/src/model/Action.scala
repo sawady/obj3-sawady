@@ -29,7 +29,7 @@ case class Redirect(ip: IP) extends Action {
 case object InformDest extends Action {
 
   def apply(p: Packet) = {
-    Net.toNet.enqueue(Packet(p.port,p.dest, p.source, "You package was denied"))
+    WAN.toNet.enqueue(Packet(p.port,p.dest, p.source, "You package was denied"))
   }
 
 }
