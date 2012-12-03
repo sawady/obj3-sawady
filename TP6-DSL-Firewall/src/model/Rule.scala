@@ -6,24 +6,28 @@ abstract class Rule(rule: Packet => Boolean) {
 
 }
 
-case class EqPortSource(n: Port) extends Rule(_.source.port == n)
+case object TrueRule extends Rule(p => true)
 
-case class EqPortDest(n: Port) extends Rule(_.dest.port == n)
+case class EqPort(n: Port) extends Rule(_.port == n)
 
-case class GtPortSource(n: Port) extends Rule(_.source.port > n)
+case class GtPort(n: Port) extends Rule(_.port > n)
 
-case class LtPortSource(n: Port) extends Rule(_.source.port < n)
+case class LtPort(n: Port) extends Rule(_.port < n)
 
-case class GtPortDest(n: Port) extends Rule(_.dest.port > n)
+case class EqIpSource(n: IP) extends Rule(_.source == n)
 
-case class LtPortDest(n: Port) extends Rule(_.dest.port < n)
+case class EqIpDest(n: IP) extends Rule(_.dest == n)
 
-case class EqIpSource(n: Ip) extends Rule(_.source.ip == n)
+case class GtIpSource(n: IP) extends Rule(_.source > n)
 
-case class EqIpDest(n: Ip) extends Rule(_.dest.ip == n)
+case class GtIpDest(n: IP) extends Rule(_.dest > n)
+
+case class LtIpSource(n: IP) extends Rule(_.source < n)
+
+case class LtIpDest(n: IP) extends Rule(_.dest < n)
 
 case class Not(rule: Rule) extends Rule(p => !rule(p))
 
-case class OneApply(rules: Rule*) extends Rule(p => rules exists (_(p)))
+case class OneApply(rules: Seq[Rule]) extends Rule(p => rules exists (_(p)))
 
-case class AllApply(rules: Rule*) extends Rule(p => rules forall (_(p)))
+case class AllApply(rules: Seq[Rule]) extends Rule(p => rules forall (_(p)))
