@@ -32,11 +32,11 @@ case class Port(port: Int) {
 
 case class Packet(val port: Port, val source: IP, val dest: IP, val body: String)
 
-class Net {
+object LAN {
 
-  val lan: Queue[Packet] = Queue()
+  var lan: Queue[Packet] = Queue()
 
-  val firewall = new Firewall()
+  var firewall = new Firewall()
 
   // Deberia depender de una politica
   def incomePacket(p: Packet): Unit = {
@@ -46,5 +46,16 @@ class Net {
       case Some(Block) =>
     }
   }
+  
+  def reset() = {
+	  lan = Queue()
+	  firewall = new Firewall()    
+  }
 
+}
+
+object Net {
+  
+  val toNet: Queue[Packet] = Queue()
+  
 }
