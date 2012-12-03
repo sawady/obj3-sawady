@@ -6,37 +6,37 @@ trait Action {
 
 }
 
-class JoinActions(actions: Action*) extends Action {
+case object NullAction extends Action {
+
+  def apply(p: Packet) = {}
+
+}
+
+case class JoinActions(actions: Seq[Action]) extends Action {
   
   def apply(p: Packet) = actions foreach(_(p))
   
 }
 
-case class Redirect(ip: Socket*) extends Action {
+case class Redirect(ip: IP) extends Action {
 
   def apply(p: Packet) = {}
 
 }
 
-object NullAction extends Action {
+case object InformDest extends Action {
 
   def apply(p: Packet) = {}
 
 }
 
-object InformDest extends Action {
+case object LogMessage extends Action {
 
   def apply(p: Packet) = {}
 
 }
 
-object LogMessage extends Action {
-
-  def apply(p: Packet) = {}
-
-}
-
-object LogDeny extends Action {
+case object LogDeny extends Action {
 
   def apply(p: Packet) = {}
 

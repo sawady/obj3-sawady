@@ -3,11 +3,11 @@ import scala.collection.mutable.MutableList
 import scala.reflect.BeanProperty
 import scalaz._
 import Scalaz._
-import scala.collection.immutable.Stack
+import scala.collection.mutable.Stack
 
 class Firewall {
 
-  private var rules: Stack[FirewallRule] = Stack()
+  val rules: Stack[FirewallRule] = Stack()
 
   def add(fr: FirewallRule) = rules.push(fr)
 
