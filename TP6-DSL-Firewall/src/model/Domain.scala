@@ -22,8 +22,6 @@ case class Port(port: Int) {
 
 }
 
-case class Socket(ip: IP, port: Port)
-
 case class Packet(val port: Port, val source: IP, val dest: IP, val body: String)
 
 class Net {
