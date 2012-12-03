@@ -54,8 +54,12 @@ object LAN {
 
 }
 
-object Net {
+object WAN {
   
-  val toNet: Queue[Packet] = Queue()
+  var toNet: Queue[Packet] = Queue()
+  
+  def reset() = { 
+    toNet = Queue() 
+  }
   
 }
