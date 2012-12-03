@@ -21,7 +21,7 @@ case class JoinActions(actions: Seq[Action]) extends Action {
 case class Redirect(ip: IP) extends Action {
 
   def apply(p: Packet) = {
-    
+    LAN.lan.enqueue(Packet(p.port, p.source, ip, p.body))
   }
 
 }
