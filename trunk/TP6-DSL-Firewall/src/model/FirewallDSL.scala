@@ -5,8 +5,12 @@ import scala.collection.mutable.MutableList
 
 trait FirewallDSL {
 
+  // ESTADO
+  
   private var firewall: Firewall = _
   private var sentences: Stack[SENTENCE] = _
+  
+  // FUNCION PRINCIPAL
 
   def onFirewall(f: Firewall): Unit => Unit = {
     sentences = Stack()
@@ -14,19 +18,23 @@ trait FirewallDSL {
     return (body: Unit) => { body; sentences foreach(_.build) } 
   }
 
+  // SYNTACTIC SUGAR
+  
   def Ports(ports: Int*): List[Port] = ports.map(Port(_)).toList
 
   def SOURCE(byte1: Int, byte2: Int, byte3: Int, byte4: Int): Source = new Source(IP(byte1, byte2, byte3, byte4))
 
   def DEST(byte1: Int, byte2: Int, byte3: Int, byte4: Int): Dest = new Dest(IP(byte1, byte2, byte3, byte4))
+  
+  class WILDCARD
+  val * = new WILDCARD
 
   trait TARGET
   case class Source(ip: IP) extends TARGET
   case class Dest(ip: IP) extends TARGET
-
-  class WILDCARD
-  val * = new WILDCARD
-
+  
+  // SENTENCIAS
+  
   trait SENTENCE {
 
     var rules: MutableList[Rule] = MutableList()

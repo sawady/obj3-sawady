@@ -77,7 +77,7 @@ class TestDSL extends FunSuite with BeforeAndAfter with FirewallDSL {
 
     onFirewall(LAN.firewall) {
 
-      BLOCK EQ DEST(192, 168, 1, 185) REDIRECT (192, 168, 1, 73)
+      BLOCK EQ DEST(192, 168, 1, 1) REDIRECT (192, 168, 1, 73)
 
     }
 
